@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code Chief of Staff</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-primary: #ffffff;
+    --bg-secondary: #fafafa;
+    --bg-tertiary: #f5f5f5;
+    --border-subtle: #e5e5e5;
+    --border-medium: #d0d0d0;
+    --text-primary: #1a1a1a;
+    --text-secondary: #666666;
+    --text-muted: #999999;
+    --accent-gold: #c9a962;
+    --accent-sage: #7a9e9f;
+    --accent-lavender: #9b8aa5;
+    --accent-taupe: #a5897a;
+    --accent-moss: #8fa387;
+    --accent-rose: #b08b8b;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    line-height: 1.7;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 60px 40px;
+  }
+
+  /* Header */
+  .site-header {
+    margin-bottom: 48px;
+    padding-bottom: 32px;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  .site-header h1 {
+    font-size: 2.2rem;
+    font-weight: 300;
+    letter-spacing: -0.03em;
+    color: var(--text-primary);
+    margin-bottom: 12px;
+    border: none;
+    padding: 0;
+  }
+  .site-header .subtitle {
+    font-size: 1.05rem;
+    font-weight: 300;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: 16px;
+  }
+  .site-header .attribution {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+  }
+  .site-header .attribution a {
+    color: var(--accent-gold);
+    text-decoration: none;
+    font-weight: 500;
+  }
+  .site-header .attribution a:hover { text-decoration: underline; }
+
+  /* Navigation tabs */
+  .tab-bar {
+    display: flex;
+    gap: 0;
+    margin-bottom: 40px;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  .tab {
+    padding: 10px 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    color: var(--text-muted);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s ease;
+    position: relative;
+    bottom: -1px;
+  }
+  .tab.active {
+    color: var(--text-primary);
+    border-bottom-color: var(--accent-gold);
+  }
+  .tab:not(.active):hover { color: var(--text-secondary); }
+
+  /* Content panels */
+  .file-content { display: none; }
+  .file-content.active { display: block; }
+
+  /* Typography */
+  h1 {
+    font-size: 1.8rem;
+    font-weight: 300;
+    letter-spacing: -0.03em;
+    margin-top: 48px;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  h2 {
+    font-size: 1.25rem;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    margin-top: 40px;
+    margin-bottom: 12px;
+    color: var(--text-primary);
+  }
+  h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    margin-top: 28px;
+    margin-bottom: 8px;
+    color: var(--text-primary);
+  }
+  p {
+    margin: 14px 0;
+    font-weight: 300;
+    color: var(--text-secondary);
+    line-height: 1.7;
+  }
+  strong { font-weight: 600; color: var(--text-primary); }
+  em { font-style: italic; }
+  a { color: var(--accent-gold); text-decoration: none; font-weight: 500; }
+  a:hover { text-decoration: underline; }
+  hr { border: none; border-top: 1px solid var(--border-subtle); margin: 40px 0; }
+
+  /* Lists */
+  ul, ol { padding-left: 1.5em; margin: 12px 0; }
+  li {
+    margin: 6px 0;
+    font-weight: 300;
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+  li strong { color: var(--text-primary); }
+
+  /* Code */
+  code {
+    font-family: 'SF Mono', Monaco, 'Fira Code', monospace;
+    font-size: 0.85em;
+    background: var(--bg-tertiary);
+    padding: 2px 6px;
+    border-radius: 3px;
+    color: var(--text-primary);
+  }
+  pre {
+    background: linear-gradient(135deg, rgba(201,169,98,0.08), rgba(201,169,98,0.03));
+    border: 1px solid rgba(201,169,98,0.3);
+    border-radius: 6px;
+    padding: 20px 24px;
+    overflow-x: auto;
+    margin: 16px 0;
+  }
+  pre code {
+    background: none;
+    padding: 0;
+    font-size: 0.82rem;
+    line-height: 1.6;
+    color: var(--text-primary);
+    font-weight: 400;
+  }
+
+  /* Tables */
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 16px 0;
+    font-size: 0.9rem;
+  }
+  th {
+    text-align: left;
+    padding: 10px 14px;
+    font-weight: 600;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    border-bottom: 2px solid var(--border-subtle);
+    background: var(--bg-secondary);
+  }
+  td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border-subtle);
+    font-weight: 300;
+    color: var(--text-secondary);
+  }
+  td strong { font-weight: 500; }
+
+  /* Blockquotes */
+  blockquote {
+    border-left: 3px solid var(--accent-gold);
+    padding: 12px 20px;
+    margin: 16px 0;
+    background: rgba(201,169,98,0.06);
+    border-radius: 0 6px 6px 0;
+  }
+  blockquote p {
+    margin: 4px 0;
+    font-size: 0.9rem;
+    font-style: italic;
+    color: var(--text-secondary);
+  }
+
+  .file-content > h1:first-child,
+  .file-content > :first-child h1 { margin-top: 0; }
+
+  @media (max-width: 640px) {
+    .container { padding: 32px 20px; }
+    .site-header h1 { font-size: 1.7rem; }
+    .tab { padding: 8px 12px; font-size: 0.72rem; }
+    pre { padding: 14px 16px; }
+    table { font-size: 0.8rem; }
+    th, td { padding: 8px 10px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="site-header">
+  <h1>Claude Code Chief of Staff</h1>
+  <div class="subtitle">How I turned Claude Code into a persistent AI chief of staff — the full architecture, from CLAUDE.md to scheduled background scripts.</div>
+  <div class="attribution">Built with Claude Code by <a href="https://www.tiktok.com/@loganinthefuture">@loganinthefuture</a> · <a href="https://logancurrie.com">logancurrie.com</a> · <a href="https://loganinthefuture.substack.com/">Captain's Log</a></div>
+</div>
+
+<div class="tab-bar">
+  <div class="tab active" onclick="showTab('readme')">Overview</div>
+  <div class="tab" onclick="showTab('architecture')">Architecture</div>
+  <div class="tab" onclick="showTab('getting-started')">Getting Started</div>
+  <div class="tab" onclick="showTab('claude-md')">CLAUDE.md Template</div>
+</div>
+
+<div id="readme" class="file-content active"></div>
+<div id="architecture" class="file-content"></div>
+<div id="getting-started" class="file-content"></div>
+<div id="claude-md" class="file-content"></div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script>
+function showTab(id) {
+  document.querySelectorAll('.tab').forEach(t => {
+    t.classList.toggle('active', t.getAttribute('onclick').includes("'" + id + "'"));
+  });
+  document.querySelectorAll('.file-content').forEach(c => c.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+const files = {
+  readme: `## What This Is
+
+Most people use Claude Code for one-shot tasks. Write this email. Fix this bug. Explain this code. That's useful — but it's like hiring a brilliant contractor and only giving them 15-minute jobs.
+
+This repo is the architecture for something different: a **persistent operational layer** that remembers your context, runs in the background, and compounds over time. Morning briefings generated before you wake up. Meeting transcripts processed into facts and follow-ups overnight. Commitments tracked and surfaced when they're overdue.
+
+It's the difference between "I use AI sometimes" and "AI is part of how I operate."
+
+## Architecture Overview
+
+\`\`\`
+DATA SOURCES
+  Calendar · Email · Meeting Transcripts · Analytics · Notes
+                          ↓
+SCHEDULING LAYER
+  launchd/cron jobs · Session hooks · Reminder scripts
+                          ↓
+PROCESSING
+  Transcript extraction · Email triage · Briefing generation
+  Follow-up tracking · Content pipeline · Data analysis
+                          ↓
+KNOWLEDGE STORE
+  Facts database · Follow-up queue · Decision log
+  Meeting archive · Position documents · Network map
+                          ↓
+OUTPUTS
+  Morning briefings · Draft messages · Reminders
+  Content drafts · Dashboard updates · Research summaries
+\`\`\`
+
+## The Three Work Tiers
+
+The key design decision: not everything needs human involvement at every step.
+
+**Tier 1 — Claude owns entirely:** Process transcripts, sync data, generate briefings, flag overdue items.
+
+**Tier 2 — Claude preps, you decide:** Draft replies for you to review. Triage inbox for you to prioritize. Surface follow-ups for you to act on.
+
+**Tier 3 — Human only:** Send messages, publish content, make judgment calls, strategic decisions.
+
+Most AI setups try to do everything or nothing. This one is explicit about the handoff points.
+
+## What's In Here
+
+| File | What It Is |
+|------|-----------|
+| architecture.md | Full system diagram, data flows, memory system, scheduling |
+| getting-started.md | Progressive build guide — Day 1 to Month 3+ |
+| examples/CLAUDE.md | Template for your own chief of staff config |
+| examples/scripts/briefing.py | Morning briefing generator |
+| examples/scripts/meeting_processor.py | Transcript → facts + follow-ups pipeline |
+
+## Design Principles
+
+- **Clarity beats code.** The bottleneck is never technical — it's knowing what you want.
+- **Progressive complexity.** Each layer works on its own before you add the next one.
+- **Close loops, don't open them.** Every automation should end with a verifiable outcome.
+- **Human-in-the-loop by design.** Prep is automated. Decisions are not.
+- **Memory is architecture.** If the AI doesn't remember yesterday, it can't help with tomorrow.
+
+---
+
+MIT — use it, adapt it, build on it.`,
+
+  architecture: `## Data Flow
+
+### Always-On (every session)
+| Source | Script | Cadence | Output |
+|--------|--------|---------|--------|
+| Google Calendar | gcal.py | Session start | Today's schedule in briefing |
+| Gmail | gmail.py | Session start | Unread summary, action items |
+| Knowledge store | briefing.py | Session start | Follow-ups, overdue flags, priorities |
+
+### Scheduled (background)
+| Source | Script | Cadence | Output |
+|--------|--------|---------|--------|
+| Meeting transcripts | meeting_sync.py | Hourly (launchd) | Processed transcripts in vault |
+| Platform analytics | analytics.py | Weekly (launchd) | Dashboard update |
+| Reminders | reminder.py | Daily/weekly | Push notifications |
+
+## Memory Architecture
+
+The knowledge store is the system's long-term brain. Everything flows into it, and the briefing system reads from it every session.
+
+\`\`\`
+knowledge-store/
+├── 00-inbox/                    # Unprocessed inputs
+│   └── meetings/                # Raw transcripts
+├── 10-atlas/                    # Maps and indexes
+│   ├── INDEX.md                 # Root navigation
+│   ├── dashboard.md             # Metrics + cadence tracking
+│   ├── domains/                 # Topic area overviews
+│   └── people/                  # Relationship context
+├── 30-thinking/                 # Your positions and frameworks
+│   ├── positions/               # Stance documents
+│   └── frameworks/              # Decision-making models
+├── 40-projects/                 # Active work streams
+├── 50-output/                   # Published/shared artifacts
+├── 60-memory/                   # Machine-readable memory
+│   ├── facts.jsonl              # Extracted facts with source + date
+│   ├── decisions.md             # Key decisions + rationale
+│   └── patterns.md              # Observed behavioral patterns
+└── 70-queues/                   # Action queues
+    ├── follow-ups.md            # Open commitments with dates
+    ├── approval-queue.md        # Pending your decision
+    └── content-pipeline.md      # Content ideas → drafts → published
+\`\`\`
+
+## Memory System
+
+The folder structure is just storage. The real power comes from how the system *searches*, *remembers*, and *builds on itself* across sessions.
+
+### The Problem: Claude Code Has No Memory
+
+Each Claude Code session starts fresh. Close the terminal, and everything from the conversation is gone. For a chief of staff that needs to remember your last 50 meetings, track 30 open commitments, and know that "Sarah" means your cofounder — it's a dealbreaker.
+
+The memory system solves this with three layers:
+
+\`\`\`
+Layer 1: Structured Database (SQLite + FTS5)
+  → Fast lookup of facts, follow-ups, meeting notes
+  → Full-text search across everything extracted
+
+Layer 2: Semantic Search (embedding-based)
+  → "What did we discuss about pricing strategy?"
+  → Finds relevant context even without exact keywords
+
+Layer 3: Session Continuity
+  → Snapshots of working state during sessions
+  → Export transcripts on session end
+  → Prep agent synthesizes overnight for next morning
+\`\`\`
+
+### Layer 1: Structured Memory (SQLite)
+
+A single SQLite database stores everything the system extracts:
+
+\`\`\`sql
+-- Facts: atomic pieces of knowledge with provenance
+CREATE TABLE facts (
+    id INTEGER PRIMARY KEY,
+    content TEXT NOT NULL,
+    source TEXT,
+    context TEXT,
+    domain TEXT,
+    confidence REAL DEFAULT 1.0,
+    created_at TIMESTAMP,
+    expires_at TIMESTAMP
+);
+
+-- Full-text search index
+CREATE VIRTUAL TABLE facts_fts USING fts5(content, source, context);
+
+-- Follow-ups: commitments with escalation tracking
+CREATE TABLE follow_ups (
+    id INTEGER PRIMARY KEY,
+    owner TEXT NOT NULL,
+    action TEXT NOT NULL,
+    deadline TEXT,
+    source_meeting TEXT,
+    status TEXT DEFAULT 'open',
+    escalation_level INTEGER DEFAULT 0,
+    created_at TIMESTAMP,
+    completed_at TIMESTAMP
+);
+\`\`\`
+
+**Why SQLite?** Single file, no server, works everywhere. Claude Code can query it directly with sqlite3.
+
+**Why FTS5?** Full-text search with ranking. The briefing script searches across all facts, meetings, and follow-ups instantly.
+
+### Layer 2: Hybrid Search
+
+Full-text search finds exact matches. But you also need *conceptual* matches — things that are related but use different words.
+
+The hybrid approach combines:
+1. **BM25 keyword search** (via FTS5) — fast, precise, great for names and specific terms
+2. **Semantic vector search** — finds conceptual matches ("fundraising strategy" finds notes about "Series A timeline")
+
+\`\`\`
+Query: "What's the status of the product launch?"
+
+BM25 results:
+  → "Product launch date moved to March 15"
+  → "Launch checklist reviewed in Monday standup"
+
+Semantic results:
+  → "Marketing assets need final approval before go-live"
+  → "Beta feedback summary — 3 blockers remaining"
+
+Combined + deduplicated → Full picture
+\`\`\`
+
+**Keyword search alone misses too much. Semantic search alone is too noisy. Use both.**
+
+### Layer 3: Session Continuity
+
+This is what makes the system feel like it *remembers you*, not just your data.
+
+**Session snapshots:** Periodically during long sessions, the system captures a working summary — what you're focused on, decisions made, open threads. If the session hits context limits, snapshots provide continuity.
+
+**Session export:** When a session ends, the full transcript is saved. This creates a searchable archive of every conversation.
+
+**Working memory:** A small set of files representing your *current state* — what you're focused on this week, decisions pending, active threads. Updated by the system, read at session start.
+
+\`\`\`
+working/
+├── this-week.md          # Current focus areas
+├── pending-decisions.md  # Decisions waiting on you
+├── active-threads.md     # Conversations in progress
+└── energy-context.md     # Schedule density, capacity notes
+\`\`\`
+
+### The Overnight Pipeline
+
+The most powerful part runs while you sleep:
+
+\`\`\`
+Midnight    → Sweep: reconcile all data sources
+1:00 AM     → Task check: scan for overdue items,
+               approaching deadlines, stale follow-ups
+2:00 AM     → Prep agent: synthesize into a
+               draft briefing with priorities
+6:00 AM     → Briefing ready when you
+               open your first session
+\`\`\`
+
+Each step builds on the previous one. The sweep ensures data is current. The task check flags what needs attention. The prep agent decides what's *worth your attention* — not everything new, just what matters.
+
+### Follow-Up Escalation
+
+Not all follow-ups are equal. A commitment made yesterday is different from one that's 2 weeks overdue:
+
+| Level | Age | Signal | Action |
+|-------|-----|--------|--------|
+| 0 | 0-3 days | Normal | Included in briefing if relevant |
+| 1 | 4-7 days | Getting stale | Flagged with gentle nudge |
+| 2 | 8-14 days | Overdue | Highlighted, suggested follow-up draft |
+| 3 | 14+ days | At risk | Top of briefing, draft message ready |
+
+Items naturally rise in visibility as they age — no manual triage needed.
+
+### Daily Retrospective
+
+Once a day, the system reviews what happened:
+
+1. **Session review** — What was discussed? Accomplished? Deferred?
+2. **Commitment tracking** — New follow-ups? Completed? Escalating?
+3. **Pattern detection** — Same topic coming up repeatedly? Something being avoided?
+
+The retrospective feeds back into the next morning's briefing: **work → capture → review → prioritize → work**.
+
+## Scheduling
+
+### macOS (launchd)
+
+Each job is a small .plist file in ~/Library/LaunchAgents/.
+
+\`\`\`xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+  "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.chiefofstaff.meeting-sync</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/usr/bin/python3</string>
+        <string>/Users/you/Scripts/meeting_sync.py</string>
+    </array>
+    <key>StartInterval</key>
+    <integer>3600</integer>
+</dict>
+</plist>
+\`\`\`
+
+### Linux (cron)
+
+\`\`\`
+0 * * * * python3 ~/Scripts/meeting_sync.py
+0 7 * * * python3 ~/Scripts/briefing.py
+0 9 * * 1 python3 ~/Scripts/weekly_reminder.py
+\`\`\`
+
+## Session Hooks
+
+Claude Code supports hooks that run automatically at session start and end:
+
+\`\`\`json
+{
+  "hooks": {
+    "SessionStart": [
+      { "command": "python3 ~/Scripts/briefing.py", "timeout": 30 }
+    ],
+    "SessionEnd": [
+      { "command": "python3 ~/Scripts/session_export.py", "timeout": 15 }
+    ]
+  }
+}
+\`\`\`
+
+## CLAUDE.md as Operating System
+
+The CLAUDE.md file is the most important piece of the architecture. It's not just context — it's the **operating instructions** for your AI chief of staff.
+
+Key sections:
+1. **Who you are** — role, company, key relationships
+2. **How you work** — communication style, decision-making patterns, energy rhythms
+3. **Chief of staff duties** — what Claude should proactively do
+4. **Tone and personality** — how Claude should interact with you
+5. **Priority framework** — how to weight competing tasks
+6. **Tools and connectors** — what integrations are available
+
+The CLAUDE.md should be a living document. Update it when Claude gets something wrong. Add rules when you notice repeated mistakes. Remove rules that no longer apply.
+
+**Watch the length.** CLAUDE.md is loaded into every session's context window. A 200-line file that's tight and specific beats a 2,000-line file bloated with edge cases. If it's getting long, split reference material into separate memory files and keep the core instructions concise.`,
+
+  'getting-started': `You don't build a chief of staff system in a weekend. You build it one layer at a time, each one useful on its own, each one making the next one better.
+
+## Phase 1: The Foundation (Day 1 — 10 minutes)
+
+### Create your CLAUDE.md
+
+This is the single highest-leverage thing you can do with Claude Code. Create a file called \`CLAUDE.md\` in your project folder:
+
+\`\`\`markdown
+# About Me
+[Your name] — [what you do in one sentence]
+
+# Key Context
+- My main focus right now is...
+- I communicate via [channels]
+- My voice is [casual/professional/direct/warm]
+
+# How I Work
+- Strongest at: [your superpower]
+- Weakest at: [your gap]
+- When drafting messages, match my voice: [2-3 style notes]
+\`\`\`
+
+Even 5 lines dramatically improves every Claude interaction going forward.
+
+**Keep it tight.** CLAUDE.md loads into every session's context window — every line costs tokens. A focused 100-200 line file beats a sprawling 2,000 line one. If it's getting long, move reference material into separate memory files and keep the core instructions lean.
+
+**What you'll notice:** Claude stops feeling generic. It starts using your terminology, matching your tone, remembering your priorities.
+
+---
+
+## Phase 2: Memory (Week 1 — 30 minutes)
+
+### Add persistent memory files
+
+Claude Code has an auto-memory directory at \`~/.claude/projects/[your-project]/memory/\`. Files here persist across sessions.
+
+\`\`\`markdown
+# Memory
+
+## Active Projects
+- [Project A]: [status, key contacts, next steps]
+
+## Open Follow-ups
+- [ ] Reply to Sarah about the proposal (due Friday)
+- [ ] Send deck to investor group
+
+## Decisions Made
+- 2024-01-15: Decided to focus on B2B over B2C for Q1
+\`\`\`
+
+**Key principle:** Memory files should be updated by Claude during sessions, not just by you.
+
+**What you'll notice:** Sessions stop with "where were we?" Claude opens with "Last time we decided X, and you still need to follow up on Y."
+
+---
+
+## Phase 3: The Morning Briefing (Week 2 — 1 hour)
+
+Start manual, then automate. Do it by hand for a few days so you know what you actually want. Then ask Claude to build the script.
+
+**What you'll notice:** You stop starting the day in reactive mode. The briefing tells you what matters before your inbox does.
+
+---
+
+## Phase 4: Meeting Processing (Month 1 — 2 hours)
+
+If you use a meeting transcription tool, build a pipeline that extracts facts, commitments, and follow-ups automatically.
+
+**What you'll notice:** Three weeks in, Claude casually mentions context from a call you barely remember. That's the compound effect.
+
+---
+
+## Phase 5: Background Automation (Month 2)
+
+Take your working scripts and schedule them with launchd or cron. Things start happening without you asking.
+
+---
+
+## Phase 6: Session Hooks (Month 2)
+
+Add hooks so Claude automatically gets context at session start and saves context at session end.
+
+---
+
+## Phase 7: The Full Stack (Month 3+)
+
+Everything connects. CLAUDE.md + memory + briefings + processing + scheduling + hooks. Each addition compounds on the foundation.
+
+## Common Mistakes
+
+1. **Building it all at once.** Each layer should be proven before the next one is added.
+2. **Neglecting CLAUDE.md.** It's the foundation. If Claude keeps getting things wrong, update CLAUDE.md.
+3. **Automating before you understand.** Do things manually first. You need to know what "good" looks like.
+4. **Treating memory as a dump.** Curate it. Outdated context is worse than no context.
+5. **Skipping the follow-up tracker.** Most of the value comes from "you said you'd do X and it's been 5 days."`,
+
+  'claude-md': `> This file lives in your project root. Claude Code reads it at the start of every session. Start with the basics. Add to it every time Claude gets something wrong.
+
+## Who You're Helping
+
+**[Your Name]** — [your role / what you do]
+- [Key professional context — company, stage, team size]
+- [Communication channels you use — email, Slack, etc.]
+- [Anyone Claude needs to know about — co-founder, assistant, key clients]
+
+## Active Work Streams
+- **[Client/Project A]**: [brief context, cadence, status]
+- **[Client/Project B]**: [brief context, cadence, status]
+- **[Side Project]**: [brief context, priority level]
+
+## How You Work
+- Strongest at: [your superpowers]
+- Weakest at: [your gaps]
+- Energy patterns: [e.g., mornings for deep work, afternoons for calls]
+
+## Chief of Staff Duties
+- **Morning briefings**: calendar, priority tasks, overdue items
+- **Follow-up enforcement**: track commitments, nudge on overdue items
+- **Meeting prep**: pull context before calls, suggest talking points
+- **Content triage**: flag relevant articles/threads for your POV
+- **Research**: web searches, summaries, competitor analysis on demand
+
+## Tone & Personality
+- You know me. Reflect back wins, notice patterns, remember context.
+- Celebrate before you optimize. Acknowledge before pivoting to next steps.
+- Not a robot, not a sycophant. Warm, direct, real. Have opinions.
+- Earned encouragement over generic praise. Be specific.
+- Chief of staff, not task tracker. Catch patterns, connect dots, have my back.
+
+## Communication Style
+- [Your email voice — e.g., "short paragraphs, dashes over commas"]
+- [Sign-off preferences — e.g., "Cheers" not "Best"]
+- [Pronoun usage — e.g., "we" for company, "I" for personal]
+
+## Priority Framework
+- [How to weight competing tasks]
+- Max [N] focus items per day. Surface the top ones, have an opinion.
+- Include effort estimates.
+- Flag overcommitment. Protect sustainable work hours.
+
+## Guidelines
+- Keep responses concise.
+- Interpret vague messages charitably and act. Ask only when truly ambiguous.
+- Proactively remind about forgotten items.
+- Don't assume what I haven't done. Your logs are not the full picture.
+- When I correct behavior, write it down in this file. Each session starts fresh.
+
+## Safety
+- Don't exfiltrate private data
+- Don't run destructive commands without asking
+- Don't post anything public without explicit approval
+- When in doubt, ask`
+};
+
+marked.setOptions({ gfm: true, breaks: false });
+Object.entries(files).forEach(([id, content]) => {
+  document.getElementById(id).innerHTML = marked.parse(content);
+});
+</script>
+
+</body>
+</html>
