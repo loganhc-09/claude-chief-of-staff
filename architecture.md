@@ -13,6 +13,9 @@ flowchart TB
         GMAIL["Gmail\n(personal + work)"]
         ANALYTICS["Platform Analytics\n(social, website, etc.)"]
         NOTES["Notes & Documents\n(Obsidian, Notion, etc.)"]
+        DISCORD["Discord\n(conversations + approvals)"]
+        FEEDS["YouTube + Newsletters\n(content scout sources)"]
+        RSS["RSS + HN\n(reading system feeds)"]
     end
 
     subgraph SCHEDULING["SCHEDULING LAYER"]
@@ -20,14 +23,21 @@ flowchart TB
         LD_SYNC["launchd/cron: hourly\nmeeting sync"]
         LD_REMIND["launchd/cron: daily\nreminder + triage"]
         SESSION["Session start hook\nbriefing script"]
+        SCOUT_SCHED["launchd: 5:15am daily\ncontent scout pipeline"]
+        READ_SCHED["launchd: 5am daily\nreading collection"]
+        DISCORD_BOT["Discord bot\nalways-on (KeepAlive)"]
     end
 
     subgraph PROCESSING["PROCESSING"]
         direction TB
         SYNC["Meeting sync\nfetch + store transcripts"]
         EXTRACT["Extraction pipeline\ntranscripts → facts + follow-ups"]
-        BRIEF["Briefing generator\ncalendar + email + follow-ups\n+ overdue flags"]
+        BRIEF["Briefing generator\ncalendar + email + follow-ups\n+ overdue flags + signals"]
         ANALYSIS["Data analysis\nperiodic pattern extraction"]
+        SCOUT["Content scout\ncollect → extract → cluster → brief"]
+        READING["Reading system\ncollect → score → rank → learn"]
+        DISCORD_EXTRACT["Discord extraction\nconversations → facts"]
+        APPROVAL["Approval routing\n✅ approve / ❌ reject / ✏️ edit"]
     end
 
     subgraph MEMORY["KNOWLEDGE STORE"]
@@ -63,27 +73,41 @@ flowchart TB
     GMAIL -->|every session| SESSION
     ANALYTICS -->|daily/weekly| LD_REMIND
     NOTES -->|on demand| SESSION
+    DISCORD -->|always-on| DISCORD_BOT
+    FEEDS -->|daily 5:15am| SCOUT_SCHED
+    RSS -->|daily 5am| READ_SCHED
 
     %% Scheduling → Processing
     LD_SYNC --> SYNC
     LD_REMIND --> ANALYSIS
     SESSION --> BRIEF
+    SCOUT_SCHED --> SCOUT
+    READ_SCHED --> READING
+    DISCORD_BOT --> DISCORD_EXTRACT
+    DISCORD_BOT --> APPROVAL
 
     %% Processing → Memory
     SYNC --> MEETINGS
     EXTRACT --> FACTS
     EXTRACT --> FOLLOWUPS
     ANALYSIS --> DASHBOARD
+    SCOUT --> FACTS
+    DISCORD_EXTRACT --> FACTS
+    READING --> DASHBOARD
 
     %% Memory → Processing (feedback loops)
     FOLLOWUPS -->|open items| BRIEF
     DASHBOARD -->|cadence dates| BRIEF
     FACTS -->|context| EXTRACT
+    FACTS -->|knowledge profile| SCOUT
+    DASHBOARD -->|reading prefs| READING
 
     %% Processing → Outputs
     BRIEF --> BRIEFING_OUT
     BRIEF --> REMINDERS
     ANALYSIS --> VAULT_UPDATES
+    SCOUT -->|intelligence brief| BRIEFING_OUT
+    APPROVAL -->|approved content| VAULT_UPDATES
 
     %% Styling
     classDef input fill:#4a90d9,stroke:#2c5f8a,color:#fff
@@ -114,6 +138,9 @@ flowchart TB
 | Meeting transcripts | `meeting_sync.py` | Hourly (launchd) | Processed transcripts in vault |
 | Platform analytics | `analytics.py` | Weekly (launchd) | Dashboard update |
 | Reminders | `reminder.py` | Daily/weekly | Push notifications |
+| YouTube + newsletters | `content_scout.py` | Daily 5:15am (launchd) | Intelligence briefs |
+| RSS + HN feeds | `reading.py collect` | Daily 5am (launchd) | Ranked reading queue |
+| Discord conversations | `extract_discord_facts.py` | Overnight (prep pipeline) | Facts in memory.db |
 
 ### Periodic (manual trigger)
 | Source | Method | Cadence | Output |
@@ -420,6 +447,32 @@ The CLAUDE.md should be a living document. Update it when Claude gets something 
 
 **Watch the length.** CLAUDE.md is loaded into every session's context window. A 200-line file that's tight and specific beats a 2,000-line file bloated with edge cases. If it's getting long, split reference material into separate memory files and keep the core instructions concise. Every line should earn its place.
 
+## Extended Systems
+
+The core architecture above handles the basics — memory, briefings, scheduling. Three additional systems build on top of it:
+
+### Memory System (Deep Dive)
+SQLite-backed persistent memory with FTS5 search, fact extraction from messaging, effort tracking, and semantic search. The memory database becomes the system's long-term brain — everything flows into it, and the briefing system reads from it every session.
+
+See **[memory-system.md](memory-system.md)** for the full guide, including schema, CLI tool, extraction protocol, and avoidance pattern diagnosis.
+
+### Learning Loops (Deep Dive)
+Three feedback-driven systems that get smarter over time:
+- **Reading system** — curated articles ranked by your interests, trained by engagement feedback
+- **Content scout** — automated intelligence pipeline across YouTube + newsletters with AI extraction and cross-source clustering
+- **Discussion queue** — topics worth riffing on, bridging input (learning) and output (content)
+
+See **[learning-loops.md](learning-loops.md)** for architecture, scoring models, and how to build each system.
+
+### Discord System (Deep Dive)
+A Discord server as a two-way interface for the chief of staff:
+- **Bot** — always-on, routes messages to Claude Code CLI with full context
+- **Approval gates** — content drafts posted to #approvals, approved/rejected via emoji
+- **Memory mining** — search and cross-reference Discord conversation history
+- **Fact extraction** — overnight pipeline mines conversations for knowledge
+
+See **[discord-system.md](discord-system.md)** for setup, channel design, and integration patterns.
+
 ## What's Built vs. What's Possible
 
 This architecture is modular. You don't need all of it. Here's a realistic build order:
@@ -429,9 +482,12 @@ This architecture is modular. You don't need all of it. Here's a realistic build
 | **Week 1** | CLAUDE.md + manual briefings | 1-2 hours |
 | **Week 2** | Memory files (facts, follow-ups, decisions) | 1 hour |
 | **Month 1** | Calendar + email integration scripts | 2-3 hours (Claude builds them) |
-| **Month 1** | Meeting transcript processing | 2-3 hours |
+| **Month 1** | Meeting transcript processing + SQLite memory | 2-3 hours |
 | **Month 2** | Scheduled jobs (launchd/cron) | 1 hour |
 | **Month 2** | Session hooks (auto-briefing, auto-export) | 30 minutes |
-| **Month 3+** | Content pipeline, analytics, advanced queues | Ongoing |
+| **Month 2** | Discord bot + approval gates | 2-3 hours |
+| **Month 2** | Reading system with feedback learning | 2-3 hours |
+| **Month 3** | Content scout + intelligence briefs | 2-3 hours |
+| **Month 3+** | Full learning loops, everything connected | Ongoing |
 
 The "time investment" column is mostly you describing what you want — Claude Code does the actual building.
