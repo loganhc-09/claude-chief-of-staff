@@ -73,6 +73,15 @@ Most AI setups try to do everything or nothing. This one is explicit about the h
 | [learning-loops.md](learning-loops.md) | Reading system, content scout, discussion queue — feedback-driven learning |
 | [discord-system.md](discord-system.md) | Discord bot, approval gates, message memory, fact extraction |
 
+## Working Components
+
+This repo is the architecture. The code for two of the pieces lives in standalone repos you can fork independently:
+
+| Repo | What It Is | Where It Fits |
+|------|-----------|---------------|
+| [task-tinder](https://github.com/loganhc-09/task-tinder) | Swipe-based task triage with metacognition capture | The Tier 2 interface. You decide, the system learns your methods. |
+| [reading-scout](https://github.com/loganhc-09/reading-scout) | Personal reading agent that learns from your conversations | The learning-loops layer. [More here](learning-loops.md). |
+
 ## Getting Started
 
 You don't build this in a weekend. You build it one layer at a time.
