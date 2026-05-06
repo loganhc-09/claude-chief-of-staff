@@ -4,6 +4,26 @@ How I turned Claude Code into a persistent AI chief of staff — the full archit
 
 Built with Claude Code by [@loganinthefuture](https://www.tiktok.com/@loganinthefuture)
 
+---
+
+## 👋 Watching the demo? Start here
+
+If you came from the [TikTok demo](https://www.tiktok.com/@loganinthefuture), here's how the 3 layers I showed map to this repo:
+
+**Layer 1 — Knowledge (Vault):** A markdown vault Claude Code reads and writes. Start with the [`examples/CLAUDE.md`](examples/CLAUDE.md) template. That's the smallest viable version of this entire system — works the moment you drop it in a folder you `claude` from.
+
+**Layer 2 — Active (MacBook + Claude Code):** You + Claude Code in the moment. Live work, live decisions. Already running if you have Claude Code installed.
+
+**Layer 3 — Autonomous (always-on machine):** A second machine running scheduled scripts that pull email, calendar, transcripts, and post to Discord. Mine is an old laptop on my desk. Could be a Raspberry Pi, a Mac mini, or a cheap cloud VM. See [`architecture.md`](architecture.md) and [`examples/scripts/`](examples/scripts/) for what runs there.
+
+**Most viewers are already at Layers 1 + 2.** The unlock is Layer 3.
+
+**Cost:** I'm on Claude Max. Runs me ~$200/month — way less than the contractor I'd need to do half this.
+
+**Cowork version (no Claude Code required):** Coming next week. Drop a comment on the demo if you want me to tag you when it's up.
+
+---
+
 ## What This Is
 
 Most people use Claude Code for one-shot tasks. Write this email. Fix this bug. Explain this code. That's useful — but it's like hiring a brilliant contractor and only giving them 15-minute jobs.
