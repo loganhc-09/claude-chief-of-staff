@@ -181,9 +181,9 @@ Clusters surface as cards in the intelligence brief:
 
 ```
 🔥 CLUSTER: "Agent-native infrastructure" (novelty: 4.2)
-├── Greg Isenberg: agent economy rebuilds every SaaS category
-├── Andrey Fradkin: market-based scaffolding for agent coordination
-└── a]16z podcast: agent payments infrastructure
+├── [Indie founder thread]: agent economy rebuilds every SaaS category
+├── [Academic paper]: market-based scaffolding for agent coordination
+└── [VC podcast]: agent payments infrastructure
 🛠️ Multiple sources demonstrating → high signal
 ```
 
@@ -230,8 +230,8 @@ A human-curated buffer between input (learning) and output (content creation). N
 ```markdown
 # Discussion Queue
 
-## 1. Agent-Native Economy (Greg Isenberg)
-**Source:** Greg Isenberg
+## 1. Agent-Native Economy ([Indie founder thread])
+**Source:** [Indie founder thread]
 **Added:** 2026-03-01
 
 > Key quote or thesis...

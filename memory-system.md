@@ -84,8 +84,8 @@ Build a CLI tool that Claude can call directly:
 
 ```bash
 # Add a fact
-python3 ~/Scripts/memory.py add "Greg Isenberg argues agent-native economy will rebuild every SaaS category" \
-  --source "twitter-2026-03-01" \
+python3 ~/Scripts/memory.py add "An indie founder argues agent-native economy will rebuild every SaaS category" \
+  --source "twitter-thread-2026-03-01" \
   --category ideas \
   --confidence 0.9
 
@@ -132,10 +132,10 @@ When information arrives via messaging (iMessage, Discord, Telegram), extract fa
 Good extraction captures the thesis with attribution:
 
 ```
-✅ "Greg Isenberg argues agent-native economy will rebuild every SaaS
+✅ "An indie founder argues agent-native economy will rebuild every SaaS
    category for machine-to-machine"
 
-❌ "Logan shared a Greg Isenberg thread"
+❌ "Saw a thread on agent-native economy"
 ```
 
 The first is a searchable, reusable fact. The second tells you nothing without going back to the original.
