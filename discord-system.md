@@ -200,7 +200,7 @@ python3 ~/Scripts/discord_memory.py cross-ref "april 15"
 
 ### Data Source: Discrawl
 
-Discord message history is synced to a local SQLite database using [Discrawl](https://github.com/getchannels/discrawl) or a similar Discord archiver:
+Discord message history is synced to a local SQLite database using [Discrawl](https://github.com/steipete/discrawl) or a similar Discord archiver:
 
 ```
 ~/.discrawl/discrawl.db

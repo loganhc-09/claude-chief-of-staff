@@ -2,11 +2,13 @@
 
 How to give Claude Code persistent memory across sessions — from simple markdown files to a full SQLite knowledge base with semantic search.
 
-## The Problem
+## The Landscape
 
-Claude Code starts every session blank. Close the terminal and everything is gone. For a chief of staff that needs to remember your last 50 meetings, track 30 open commitments, and know that "Sarah" means your cofounder (not the client's Sarah) — this is a dealbreaker.
+Claude Code now ships with an auto-memory directory, and there's a fast-growing ecosystem of community memory solutions — plugins, MCP servers, custom skills, third-party tools. Persistent memory isn't an unsolved problem with one canonical fix anymore; it's an active design space.
 
-The memory system solves this with three layers:
+What's still hard for a chief-of-staff use case is *structured, durable retrieval over time*: facts with provenance and decay, semantic search across months of input, knowing that "Sarah" means your cofounder (not the client's Sarah) without re-disambiguating every session. The setup below is one approach — I treat it as a continuous work in progress.
+
+The system uses three layers:
 
 ```
 Layer 1: Markdown Memory Files
@@ -38,6 +40,8 @@ memory/
 ```
 
 Claude reads these at session start. Update them during sessions. They persist because they're just files on disk.
+
+**Strongly recommend [Obsidian](https://obsidian.md/) for browsing.** The vault is plain markdown so any editor works, but Obsidian's graph view, backlinks, and quick-switch make navigating a growing knowledge store fast and pleasant. It's what I have open day-to-day, and it's free for personal use.
 
 **Key principle:** Memory files should be updated by Claude during sessions, not just by you. Tell Claude: "Update the decisions log with what we decided today."
 
@@ -179,7 +183,7 @@ Full-text search finds exact matches. Semantic search finds *related* context �
 
 ### QMD (Quick Markdown Search)
 
-[QMD](https://github.com/jasonjmcghee/qmd) indexes your files and provides semantic search:
+[QMD](https://github.com/tobi/qmd) indexes your files and provides semantic search:
 
 ```bash
 # Search across vault, memory, sessions
@@ -211,6 +215,16 @@ Combined → Full picture
 ```
 
 **Rule of thumb**: Use semantic search first for broad context, keyword search second for specific facts. QMD for exploration, FTS5 for precision.
+
+## Measuring Memory Quality
+
+Memory systems are easy to feel good about and hard to actually evaluate. I run a small weekly benchmark: a fixed eval set of queries about things I've told the system in the past, scored by whether the right fact appears in the top 5 results (recall@5).
+
+The methodology is loosely modeled on [LongMemEval](https://github.com/xiaowu0162/longmemeval), the academic benchmark for long-horizon AI memory. My eval set is small and personal — not a research-grade benchmark, just a way to know whether my changes are making things better or worse.
+
+Every time I add a layer, change an extraction prompt, or swap the embedding model, the benchmark tells me whether I helped or hurt. Plenty of attempted improvements have made the score go *down*. Without the benchmark I'd have shipped them anyway.
+
+It's a continuous work in progress. The conversation about how to evaluate personal AI memory is just getting started — see Milla Jovovich's [MemPalace](https://www.mempalace.tech/) for an adjacent system publishing numbers. If you're building something similar, I'd love to compare notes.
 
 ## Integration Points
 

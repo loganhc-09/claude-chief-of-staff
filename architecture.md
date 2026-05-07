@@ -2,6 +2,8 @@
 
 How the Chief of Staff system works — data flows, memory, scheduling, and interaction patterns.
 
+> **See also:** [operating-system-map](https://loganhc-09.github.io/operating-system-map/) — interactive visualization of how the pieces connect.
+
 ## System Diagram
 
 ```mermaid
@@ -62,7 +64,7 @@ flowchart TB
     subgraph OUTPUTS["OUTPUTS"]
         direction TB
         BRIEFING_OUT["Morning Briefing\nprinted to session"]
-        REMINDERS["Reminders\n(iMessage, Telegram, etc.)"]
+        REMINDERS["Reminders\n(Discord, etc.)"]
         DRAFTS["Draft Messages\nemail, social, outreach"]
         VAULT_UPDATES["Knowledge Updates\nfacts, follow-ups, dashboards"]
     end
@@ -190,15 +192,19 @@ knowledge-store/
 - **Queues are separate from memory** — memory is what happened, queues are what needs to happen. Mixing them creates noise.
 - **People directory** is underrated — knowing "last talked to Sarah 3 weeks ago, she mentioned exploring Series A" makes every interaction more informed.
 
+**Strongly recommend [Obsidian](https://obsidian.md/) as your viewer.** The vault is plain markdown so any editor works, but Obsidian's graph view, backlinks, and quick-switch are hard to give up once you're navigating a growing knowledge store. Day-to-day, Obsidian is what I have open.
+
 ## Memory System
 
 The folder structure is just storage. The real power comes from how the system *searches*, *remembers*, and *builds on itself* across sessions.
 
-### The Problem: Claude Code Has No Memory
+### The Memory Layer
 
-Each Claude Code session starts fresh. Close the terminal, and everything from the conversation is gone. For one-shot tasks, that's fine. For a chief of staff that needs to remember your last 50 meetings, track 30 open commitments, and know that "Sarah" means your cofounder (not the Sarah from the client team) — it's a dealbreaker.
+Claude Code now ships with an auto-memory directory, and there's a fast-growing ecosystem of community memory solutions — plugins, MCP servers, custom skills, third-party tools. Persistent memory isn't an unsolved problem with one canonical fix anymore; it's an active design space with many overlapping approaches.
 
-The memory system solves this with three layers:
+What's still hard for a chief-of-staff use case is *structured, durable retrieval over time*: facts with provenance and decay, semantic search across months of input, knowing that "Sarah" means your cofounder (not the client's Sarah) without re-disambiguating every session. The setup below is one approach. I treat it as a continuous work in progress.
+
+The system uses three layers:
 
 ```
 Layer 1: Structured Database (SQLite + FTS5)
@@ -286,7 +292,7 @@ Semantic results:
 Combined + deduplicated → Full picture
 ```
 
-Tools like [QMD](https://github.com/jasonjmcghee/qmd) or a simple embedding pipeline (OpenAI embeddings + SQLite vector extension) can handle this. The key insight: **keyword search alone misses too much, semantic search alone is too noisy. Use both.**
+Tools like [QMD](https://github.com/tobi/qmd) or a simple embedding pipeline (OpenAI embeddings + SQLite vector extension) can handle this. The key insight: **keyword search alone misses too much, semantic search alone is too noisy. Use both.**
 
 ### Layer 3: Session Continuity
 
@@ -491,3 +497,16 @@ This architecture is modular. You don't need all of it. Here's a realistic build
 | **Month 3+** | Full learning loops, everything connected | Ongoing |
 
 The "time investment" column is mostly you describing what you want — Claude Code does the actual building.
+
+## References & Inspirations
+
+This system stands on a lot of other people's thinking. Roughly chronological by when each shaped my build:
+
+- **Jumperz on X — [@jumperz](https://x.com/jumperz)** (late January / early February 2026, before Karpathy). Posted a 31-piece memory architecture in three phases — core → reliability → intelligence — and a separate playbook for Discord-as-orchestration with Discrawl. The early shape of this memory system *and* the Discord setup in [discord-system.md](discord-system.md) trace back to his threads.
+- **Andrej Karpathy — [the three-folders guide](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f)** (March 2026). The clean diagrams that made a thousand people post "I'm going to build this on Saturday." The shape of the vault here owes a lot to it.
+- **Kat, the [Poet Engineer](https://x.com/poetengineer__)** — beautiful systems where ideas drift between nodes like particles in a digital garden. The weekly cross-reference loop in [learning-loops.md](learning-loops.md) came from a screenshot of hers I sent my AI saying "build that."
+- **LangChain — [Your Harness, Your Memory](https://blog.langchain.com/your-harness-your-memory/)** — the cleanest visual for *platform-owned memory* vs. *your own files*. If someone asks "why this approach instead of a hosted memory product," send them that post.
+- **[LongMemEval](https://github.com/xiaowu0162/longmemeval)** — academic benchmark for long-horizon AI memory. The methodology behind the weekly memory benchmark in [memory-system.md](memory-system.md).
+- **Milla Jovovich's [MemPalace](https://www.mempalace.tech/)** — yes, that Milla Jovovich. Open-sourced an AI memory system around the same time I was building this. A useful reminder that the design space is wide open and the benchmarking conversation is just starting.
+- **Dan Shipper / Every — [compound engineering](https://every.to/chain-of-thought/compound-engineering-how-every-codes-with-agents)** — the theory behind the weekly compound review hold. A calendar invite is the practice.
+- **[Obsidian](https://obsidian.md/)** — the vault viewer.

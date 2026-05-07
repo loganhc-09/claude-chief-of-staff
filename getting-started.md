@@ -6,6 +6,33 @@ Here's the progression, from "10 minutes tonight" to "full operational stack."
 
 ---
 
+## Before You Start: Picking Your Plan and Keeping Costs Down
+
+The Claude plan you're on shapes how much of this you can run. Honest read of the tiers:
+
+**Free / Pro ($20/month).** Tier 1 (paste prompt into Claude.ai) and Tier 2 (Claude Project with knowledge files) are designed for this plan. They work great. The full Claude Code harness from Tier 3 is technically possible on Pro, but a heavy day in Claude Code will burn through Pro's usage window fast. If you want to try the harness on Pro: keep CLAUDE.md lean, do batch work in scheduled windows, and don't run parallel subagents.
+
+**Max 5x ($100/month).** Tier 3 is comfortable for interactive use. Where it gets tight is overnight automations competing with your live sessions for the same budget. Move scheduled background scripts to the Anthropic API (billed separately, pay-per-token) so cron jobs don't eat into your subscription windows. One API key wired into your background scripts, Claude Code itself for live work.
+
+**Max 20x ($200/month, what I run).** Full headroom. Live sessions, parallel subagents, long context, and scheduled background jobs all on the same harness without splitting billing. If you're in Claude Code 4+ hours a day, this is the right tier.
+
+### Habits that lower cost on any plan
+
+These work whether you're on Pro or Max. The first two are the highest-leverage:
+
+1. **Keep CLAUDE.md tight.** Under 200 lines, focused. Move reference material into separate `memory/` files that load only when needed. Every line of CLAUDE.md is in every session, every turn — bloat compounds fast.
+2. **Don't `/clear` when you can `/compact`.** Claude Code auto-caches stable context, but the cache TTL is 5 minutes. Clearing dumps the cache and forces a full re-load on the next turn. Compact preserves the working summary *and* keeps you in cache.
+3. **Compact early, not late.** Common mistake: people wait until the session is already struggling. Compact while it's healthy and the summary is much better. Don't think of `/compact` as a last resort.
+4. **Pick the right model.** Sonnet handles most chief-of-staff work. Use Haiku for routine extraction, classification, and routing where speed beats reasoning. Reserve Opus for genuinely hard problems. Opus runs ~1.7x the per-token cost of Sonnet and chews through subscription windows accordingly.
+5. **Cap thinking on simple tasks.** Extended thinking is on by default and bills as output tokens. For routine work, lower it via `/effort` or set `MAX_THINKING_TOKENS=8000`. Save the deep thinking for problems that actually need it.
+6. **Subagents for heavy reads, not for everything.** Delegating a big search or summary to a subagent keeps the parent context small. But subagents have startup overhead and their own per-model caches — for a quick `git status`, just stay in the parent.
+7. **Grep before Read.** On a big file, narrow with `grep` or `find` first instead of pulling the whole file into context.
+8. **Slash commands for repeated patterns.** If the same workflow shows up every day, make it a skill or slash command. The instructions live once, not in every conversation's context.
+
+People who consistently do #1 + #3 report 40–60% reductions in token usage on the same workflows. Start there.
+
+---
+
 ## Phase 1: The Foundation (Day 1 — 10 minutes)
 
 ### Create your CLAUDE.md
