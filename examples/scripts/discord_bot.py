@@ -6,6 +6,36 @@ Listens for DMs and channel messages via Discord gateway WebSocket,
 routes them to Claude Code CLI with full CLAUDE.md context.
 No HTTP server or tunnel required.
 
+⚠️  SECURITY MODEL — READ BEFORE RUNNING
+
+This bot is a remote-execution bridge between Discord and Claude Code on
+your machine. The Discord bot token is, in effect, equivalent to shell
+access on the host:
+
+  - Anyone holding the bot token can post messages the bot will process
+    (the AUTHORIZED_USER_ID check defends against impersonation, not
+    against bot-token theft).
+  - Even with the auth check, YOU pasting attacker-controlled text
+    (a hostile email body, a webpage's "click here" copy, a transcript
+    with embedded instructions) is self-injection: Claude will treat
+    the pasted content as your instructions and act on it with whatever
+    tools it has available.
+
+Mitigations this script applies:
+  1. ALLOWED_TOOLS env var (default: Read,Glob,Grep) restricts the
+     blast radius if a successful injection occurs. Expand at your own
+     risk; never include Bash/Write/Edit unless you fully trust every
+     channel the bot can see.
+  2. AUTHORIZED_USER_ID gating (impersonation defense).
+  3. Audit log of every message in/out (see ~/.discord-bot/audit.log).
+
+What this script does NOT do:
+  - Sandbox Claude's filesystem access. Restrict via ALLOWED_TOOLS.
+  - Validate that pasted message content is non-malicious. You can't.
+  - Rotate the bot token. Treat token leaks as full host compromise.
+
+See SECURITY.md in the repo root for the full threat model.
+
 Requirements:
     pip install discord.py python-dotenv
 
@@ -21,6 +51,7 @@ Environment (.env.discord):
     GUILD_ID=your_server_id
     PROJECT_DIR=/path/to/your/project
     CHANNEL_APPROVALS=approval_channel_id
+    ALLOWED_TOOLS=Read,Glob,Grep    # default: read-only. Expand carefully.
 """
 
 from __future__ import annotations
@@ -48,6 +79,9 @@ DISCORD_TOKEN = os.environ.get("DISCORD_TOKEN", "")
 AUTHORIZED_USER_ID = os.environ.get("AUTHORIZED_USER_ID", "")
 GUILD_ID = os.environ.get("GUILD_ID", "")
 PROJECT_DIR = os.environ.get("PROJECT_DIR", str(Path.home() / "Desktop" / "Claude Code"))
+
+# Read-only by default. See module docstring for why this matters.
+ALLOWED_TOOLS = os.environ.get("ALLOWED_TOOLS", "Read,Glob,Grep")
 
 # Logging
 LOG_DIR = Path.home() / ".discord-bot"
@@ -80,11 +114,16 @@ def is_authorized(user_id: int) -> bool:
 
 
 async def run_claude(prompt: str, timeout: int = 120) -> str:
-    """Run Claude Code CLI with project context and return the response."""
+    """Run Claude Code CLI with project context and return the response.
+
+    --allowed-tools is the only barrier between a Discord message and
+    arbitrary code execution on this host. Keep it as narrow as possible.
+    """
     cmd = [
         "claude",
         "--print",
         "--project-dir", PROJECT_DIR,
+        "--allowed-tools", ALLOWED_TOOLS,
         prompt,
     ]
 
