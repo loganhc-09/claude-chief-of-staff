@@ -63,17 +63,17 @@ OUTPUTS
 
 See **[architecture.md](architecture.md)** for the full system diagram, data flows, memory layout, and scheduling config.
 
-## The Three Work Tiers
+## The Handoff Model
 
-The key design decision: not everything needs human involvement at every step.
+The key design decision: not everything needs human involvement at every step. Three modes of work, explicit about where AI hands off to you.
 
-**Tier 1 — Claude owns entirely:** Process transcripts, sync data, generate briefings, flag overdue items.
+**Automated:** Process transcripts, sync data, generate briefings, flag overdue items. AI owns it.
 
-**Tier 2 — Claude preps, you decide:** Draft replies for you to review. Triage inbox for you to prioritize. Surface follow-ups for you to act on.
+**Approval-gated:** Draft replies for you to review. Triage inbox for you to prioritize. Surface follow-ups for you to act on. AI preps, you decide.
 
-**Tier 3 — Human only:** Send messages, publish content, make judgment calls, strategic decisions.
+**Human only:** Send messages, publish content, make judgment calls, strategic decisions. Never automated.
 
-Most AI setups try to do everything or nothing. This one is explicit about the handoff points.
+Most AI setups try to do everything or nothing. This one is explicit about where the handoff happens.
 
 ## What's In Here
 
@@ -106,13 +106,14 @@ This repo is the architecture. The code for two of the pieces lives in standalon
 
 You don't build this in a weekend. You build it one layer at a time.
 
-1. **Day 1:** Create your CLAUDE.md (10 minutes)
-2. **Week 1:** Add memory files for persistence across sessions
-3. **Week 2:** Morning briefing routine (manual first, then scripted)
-4. **Month 1:** Scheduled scripts + SQLite memory database
-5. **Month 2:** Discord bot for mobile access + approval gates
-6. **Month 2:** Learning loops — reading system + content scout
-7. **Month 3+:** The full stack — everything connected, everything learning
+1. **Day 0:** Pick your plan + skim cost-reduction habits ([details](getting-started.md#before-you-start-picking-your-plan-and-keeping-costs-down)) — 5 minutes
+2. **Day 1:** Create your CLAUDE.md (10 minutes)
+3. **Week 1:** Add memory files for persistence across sessions
+4. **Week 2:** Morning briefing routine (manual first, then scripted)
+5. **Month 1:** Scheduled scripts + SQLite memory database
+6. **Month 2:** Discord bot for mobile access + approval gates
+7. **Month 2:** Learning loops — reading system + content scout
+8. **Month 3+:** The full stack — everything connected, everything learning
 
 See **[getting-started.md](getting-started.md)** for the full walkthrough.
 
