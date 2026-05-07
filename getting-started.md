@@ -10,9 +10,9 @@ Here's the progression, from "10 minutes tonight" to "full operational stack."
 
 The Claude plan you're on shapes how much of this you can run. Honest read of the tiers:
 
-**Free / Pro ($20/month).** Tier 1 (paste prompt into Claude.ai) and Tier 2 (Claude Project with knowledge files) are designed for this plan. They work great. The full Claude Code harness from Tier 3 is technically possible on Pro, but a heavy day in Claude Code will burn through Pro's usage window fast. If you want to try the harness on Pro: keep CLAUDE.md lean, do batch work in scheduled windows, and don't run parallel subagents.
+**Free / Pro ($20/month).** Tier 1 (Claude Project loaded with the starter prompt) is designed for this plan and works great. The full Claude Code harness in Tier 2 is technically possible on Pro, but a heavy day in Claude Code will burn through Pro's usage window fast. If you want to try the harness on Pro: keep CLAUDE.md lean, do batch work in scheduled windows, and don't run parallel subagents.
 
-**Max 5x ($100/month).** Tier 3 is comfortable for interactive use. Where it gets tight is overnight automations competing with your live sessions for the same budget. Move scheduled background scripts to the Anthropic API (billed separately, pay-per-token) so cron jobs don't eat into your subscription windows. One API key wired into your background scripts, Claude Code itself for live work.
+**Max 5x ($100/month).** Tier 2 (Harness) is comfortable for interactive use. Where it gets tight is overnight automations competing with your live sessions for the same budget. Move scheduled background scripts to the Anthropic API (billed separately, pay-per-token) so cron jobs don't eat into your subscription windows. One API key wired into your background scripts, Claude Code itself for live work.
 
 **Max 20x ($200/month, what I run).** Full headroom. Live sessions, parallel subagents, long context, and scheduled background jobs all on the same harness without splitting billing. If you're in Claude Code 4+ hours a day, this is the right tier.
 
