@@ -119,7 +119,7 @@ python3 ~/Scripts/discord_send.py --channel briefing "☀️ Morning briefing re
 cat briefing.md | python3 ~/Scripts/discord_send.py --stdin --channel briefing
 ```
 
-This is the output layer for your overnight pipeline. Briefing generated at 6am → posted to #briefing → you read it on your phone over coffee.
+This is the output layer for your overnight pipeline. Briefing generated overnight → posted to #briefing → you read it on your phone over coffee.
 
 ## Approval Gates (discord_approve.py)
 

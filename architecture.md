@@ -25,8 +25,8 @@ flowchart TB
         LD_SYNC["launchd/cron: hourly\nmeeting sync"]
         LD_REMIND["launchd/cron: daily\nreminder + triage"]
         SESSION["Session start hook\nbriefing script"]
-        SCOUT_SCHED["launchd: 5:15am daily\ncontent scout pipeline"]
-        READ_SCHED["launchd: 5am daily\nreading collection"]
+        SCOUT_SCHED["launchd: daily, early morning\ncontent scout pipeline"]
+        READ_SCHED["launchd: daily, early morning\nreading collection"]
         DISCORD_BOT["Discord bot\nalways-on (KeepAlive)"]
     end
 
@@ -76,8 +76,8 @@ flowchart TB
     ANALYTICS -->|daily/weekly| LD_REMIND
     NOTES -->|on demand| SESSION
     DISCORD -->|always-on| DISCORD_BOT
-    FEEDS -->|daily 5:15am| SCOUT_SCHED
-    RSS -->|daily 5am| READ_SCHED
+    FEEDS -->|daily, early morning| SCOUT_SCHED
+    RSS -->|daily, early morning| READ_SCHED
 
     %% Scheduling → Processing
     LD_SYNC --> SYNC
@@ -140,8 +140,8 @@ flowchart TB
 | Meeting transcripts | `meeting_sync.py` | Hourly (launchd) | Processed transcripts in vault |
 | Platform analytics | `analytics.py` | Weekly (launchd) | Dashboard update |
 | Reminders | `reminder.py` | Daily/weekly | Push notifications |
-| YouTube + newsletters | `content_scout.py` | Daily 5:15am (launchd) | Intelligence briefs |
-| RSS + HN feeds | `reading.py collect` | Daily 5am (launchd) | Ranked reading queue |
+| YouTube + newsletters | `content_scout.py` | Daily, early morning (launchd) | Intelligence briefs |
+| RSS + HN feeds | `reading.py collect` | Daily, early morning (launchd) | Ranked reading queue |
 | Discord conversations | `extract_discord_facts.py` | Overnight (prep pipeline) | Facts in memory.db |
 
 ### Periodic (manual trigger)
@@ -325,17 +325,17 @@ working/
 The most powerful part of the memory system runs while you sleep:
 
 ```
-Midnight    → Sweep: reconcile all data sources
-             (calendar changes, new emails, updated tasks)
+Late evening  → Sweep: reconcile all data sources
+                (calendar changes, new emails, updated tasks)
 
-1:00 AM     → Task check: scan for overdue items,
-             approaching deadlines, stale follow-ups
+Overnight     → Task check: scan for overdue items,
+                approaching deadlines, stale follow-ups
 
-2:00 AM     → Prep agent: synthesize overnight changes
-             into a draft briefing with priorities
+Pre-dawn      → Prep agent: synthesize overnight changes
+                into a draft briefing with priorities
 
-6:00 AM     → Briefing ready: waiting when you
-             open your first session
+By morning    → Briefing ready: waiting when you
+                open your first session
 ```
 
 Each step builds on the previous one. The sweep ensures data is current. The task check flags what needs attention. The prep agent decides what's *worth your attention* (not everything that's new — just what matters).
@@ -404,10 +404,10 @@ launchctl load ~/Library/LaunchAgents/com.chiefofstaff.meeting-sync.plist
 # Hourly meeting sync
 0 * * * * /usr/bin/python3 /home/you/Scripts/meeting_sync.py >> /tmp/meeting-sync.log 2>&1
 
-# Daily briefing prep (6am)
+# Daily briefing prep (pick a time before you're typically awake)
 0 6 * * * /usr/bin/python3 /home/you/Scripts/briefing.py >> /tmp/briefing.log 2>&1
 
-# Weekly reminder (Monday 9am)
+# Weekly reminder (pick your own day/time)
 0 9 * * 1 /usr/bin/python3 /home/you/Scripts/reminder.py >> /tmp/reminder.log 2>&1
 ```
 

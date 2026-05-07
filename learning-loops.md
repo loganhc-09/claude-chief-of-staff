@@ -35,7 +35,7 @@ A daily reading list ranked by relevance, scored by quality, and trained by your
 
 ```
 Sources (RSS, HN, newsletters, manual adds)
-    ↓ collect (daily via launchd, 5am)
+    ↓ collect (daily via launchd, early morning)
 Raw items (deduplicated, scored)
     ↓ score (pillar relevance × source trust × recency × novelty)
 Ranked queue (SQLite)
@@ -135,7 +135,7 @@ An automated intelligence pipeline that monitors external sources and surfaces n
 
 ```
 Sources (15+ YouTube channels, 8+ newsletters)
-    ↓ collect (5:15am daily via launchd)
+    ↓ collect (daily via launchd, early morning)
 Raw content (~/Vault/60-Memory/scout/raw/)
     ↓ extract (Haiku — key claims, novelty scoring)
 Signals (SQLite: content_scout_signals)
