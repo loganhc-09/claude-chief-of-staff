@@ -98,6 +98,12 @@ This repo is the architecture. The code for two of the pieces lives in standalon
 | [task-tinder](https://github.com/loganhc-09/task-tinder) | Swipe-based task triage with metacognition capture | The Tier 2 interface. You decide, the system learns your methods. |
 | [reading-scout](https://github.com/loganhc-09/reading-scout) | Personal reading agent that learns from your conversations | The learning-loops layer. [More here](learning-loops.md). |
 
+## Daily Surface
+
+Most of the system runs in the background, but day-to-day I open a local web dashboard at `localhost:8091` (loopback only — bound to `127.0.0.1`, not exposed to your LAN). It's a small Flask server that pulls from the SQLite memory and queue tables and renders three panels: Task Tinder (the swipe UI for triage), Intel (overnight signals + reading), and a day-prep panel.
+
+The full dashboard is custom to my workflow and not in this repo (yet). The Task Tinder swipe UI is open source at [task-tinder](https://github.com/loganhc-09/task-tinder) — fork that, point it at your own task store, and you have the most-used surface.
+
 ## Getting Started
 
 You don't build this in a weekend. You build it one layer at a time.
