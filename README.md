@@ -6,9 +6,9 @@ Built with Claude Code by [@loganinthefuture](https://www.tiktok.com/@loganinthe
 
 ---
 
-## 👋 Watching the demo? Start here
+## The Three Layers
 
-If you came from the [TikTok demo](https://www.tiktok.com/@loganinthefuture), here's how the 3 layers I showed map to this repo:
+The system has three layers. Most people are already at Layers 1 and 2. The unlock is Layer 3.
 
 **Layer 1 — Knowledge (Vault):** A markdown vault Claude Code reads and writes. Start with the [`examples/CLAUDE.md`](examples/CLAUDE.md) template. That's the smallest viable version of this entire system — works the moment you drop it in a folder you `claude` from.
 
@@ -16,11 +16,7 @@ If you came from the [TikTok demo](https://www.tiktok.com/@loganinthefuture), he
 
 **Layer 3 — Autonomous (always-on machine):** A second machine running scheduled scripts that pull email, calendar, transcripts, and post to Discord. Mine is an old laptop on my desk. Could be a Raspberry Pi, a Mac mini, or a cheap cloud VM. See [`architecture.md`](architecture.md) and [`examples/scripts/`](examples/scripts/) for what runs there.
 
-**Most viewers are already at Layers 1 + 2.** The unlock is Layer 3.
-
-**Cost:** I'm on Claude Max. Runs me ~$200/month — way less than the contractor I'd need to do half this.
-
-**Cowork version (no Claude Code required):** Coming next week. Drop a comment on the demo if you want me to tag you when it's up.
+**Cost:** I run on Claude Max ($200/month). Most of this works on Max 5x ($100/month) too — see [getting-started.md](getting-started.md#before-you-start-picking-your-plan-and-keeping-costs-down) for plan-tier breakdown and cost-reduction habits.
 
 ---
 
