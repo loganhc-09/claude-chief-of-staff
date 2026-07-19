@@ -1,0 +1,17 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "chief-of-staff",
+  "description": "A Claude that acts like a real chief of staff \u2014 catches patterns, closes your loops, remembers your context, and tells you the truth. Includes guided setup to build your own persistent second brain.",
+  "owner": {
+    "name": "Logan Currie",
+    "url": "https://www.logancurrie.com/chief-of-staff"
+  },
+  "plugins": [
+    {
+      "name": "chief-of-staff",
+      "source": "./plugins/chief-of-staff",
+      "category": "productivity",
+      "description": "Turn Claude into your chief of staff. A behavior layer (celebrate before you optimize, close loops, verify don't claim, surface forgotten commitments) plus /chief-of-staff:setup, which scaffolds a persistent memory + daily-brief system tailored to you."
+    }
+  ]
+}

@@ -6,6 +6,19 @@ Built with Claude Code by [@loganinthefuture](https://www.tiktok.com/@loganinthe
 
 ---
 
+## Install it as a plugin (new)
+
+The architecture below is now installable in one command. In Claude Code:
+
+```
+/plugin marketplace add loganhc-09/claude-chief-of-staff
+/plugin install chief-of-staff@chief-of-staff
+```
+
+Restart Claude Code, then run `/chief-of-staff:setup` — it interviews you and scaffolds your own persistent memory + daily-brief system. No coding required. The plugin lives in [`plugins/chief-of-staff/`](plugins/chief-of-staff/); everything it creates is plain Markdown on your machine.
+
+---
+
 ## The Three Layers
 
 The system has three layers. Most people are already at Layers 1 and 2. The unlock is Layer 3.

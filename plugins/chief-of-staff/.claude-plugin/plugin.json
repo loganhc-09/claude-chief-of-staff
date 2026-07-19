@@ -1,0 +1,20 @@
+{
+  "$schema": "https://anthropic.com/claude-code/plugin.schema.json",
+  "name": "chief-of-staff",
+  "description": "Turn Claude into your chief of staff. A behavior layer (celebrate before you optimize, close loops, verify don't claim, surface forgotten commitments) plus /chief-of-staff:setup, which scaffolds a persistent memory + daily-brief system tailored to you.",
+  "version": "0.1.0",
+  "author": {
+    "name": "Logan Currie",
+    "url": "https://www.logancurrie.com"
+  },
+  "keywords": [
+    "chief-of-staff",
+    "productivity",
+    "second-brain",
+    "memory",
+    "personal-assistant",
+    "daily-brief",
+    "follow-ups"
+  ],
+  "homepage": "https://www.logancurrie.com/chief-of-staff"
+}
