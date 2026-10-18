@@ -248,7 +248,7 @@ A human-curated buffer between input (learning) and output (content creation). N
 
 - **From reading sessions**: "This is worth riffing on" → added to queue
 - **From content scout**: High-novelty clusters → manually promoted
-- **From conversations**: Discord/Slack discussions → extracted and queued
+- **From conversations**: Slack and chat discussions → extracted and queued
 - **From original thinking**: Your own ideas that need development
 
 ### How Items Leave the Queue

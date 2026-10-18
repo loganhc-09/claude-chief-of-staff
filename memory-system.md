@@ -119,7 +119,7 @@ Not all facts are equal. Quality rules prevent the database from becoming noise:
 
 ## Memory Extraction Protocol
 
-When information arrives via messaging (iMessage, Discord, Telegram), extract facts in real-time. Images and screenshots get deleted from staging — extract during the session or lose it.
+When information arrives via messaging (iMessage, Slack, email), extract facts in real-time. Images and screenshots get deleted from staging — extract during the session or lose it.
 
 ### What to Extract (1-3 facts per message)
 
@@ -236,7 +236,7 @@ The memory system connects to everything else:
 | Meeting processing | Writes extracted facts, commitments, relationship notes |
 | Content scout | Writes signals, reads knowledge profile for relevance scoring |
 | Reading system | Reads interests for recommendation scoring |
-| Discord/messaging | Writes real-time extractions from conversations |
+| Messaging | Writes real-time extractions from conversations |
 | Session hooks | Reads at start (context injection), writes at end (session export) |
 
 ## Getting Started

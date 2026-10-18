@@ -44,7 +44,7 @@ real defenses are:
 ### 2. Self-injection
 
 You don't need a malicious third party. Your own copy-paste is the
-attack vector. If you paste a hostile email body into a Discord channel
+attack vector. If you paste a hostile email body into a chat channel
 your bot watches, or open a webpage in a context where the agent reads
 your screen, you've handed the attacker your authorization.
 
@@ -71,8 +71,8 @@ something stronger:
 | Script | Defense applied | What you still must do |
 |--------|----------------|------------------------|
 | `meeting_processor.py` | XML-tagged transcript, data-only rule in prompt, schema validation before write to `facts.jsonl` | Decide whether to trust the source of `RAW_TRANSCRIPTS_DIR` (your transcription tool can be the attack vector) |
-| `discord_bot.py` | `--allowed-tools` defaults to read-only; authorized-user check; audit log | Treat the bot token as equivalent to shell access; don't paste untrusted content into watched channels |
-| `discord_send.py` | One-way send only (no inbound) | Nothing — outbound only is safe |
+| `archive/scripts/discord_bot.py` (retired) | `--allowed-tools` defaults to read-only; authorized-user check; audit log | Treat the bot token as equivalent to shell access; don't paste untrusted content into watched channels |
+| `archive/scripts/discord_send.py` (retired) | One-way send only (no inbound) | Nothing — outbound only is safe |
 | `briefing.py` | No LLM call inside the script; reads calendar + checkboxes only | Nothing — no injection surface |
 | `memory.py` | Parameterized SQL throughout; no shell, no eval | Treat the SQLite contents as untrusted input on read; validate before re-feeding to a model |
 

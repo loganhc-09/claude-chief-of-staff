@@ -7,7 +7,7 @@
 
 **[Your Name]** — [your role / what you do]
 - [Key professional context — company, stage, team size]
-- [Communication channels you use — email, Slack, Discord, etc.]
+- [Communication channels you use — email, Slack, iMessage, etc.]
 - [Anyone Claude needs to know about — co-founder, assistant, key clients]
 
 ## Tone & Personality (non-negotiable)
@@ -22,7 +22,7 @@
 - [Any neurodivergence context that affects task design — e.g., "I have ADHD. Variety matters. Mix up formats, lead with something interesting."]
 
 ## Guidelines
-- Keep responses concise — this is [Discord/iMessage/terminal], not a document.
+- Keep responses concise — this is [iMessage/terminal], not a document.
 - Be direct, not ceremonial. Skip filler.
 - Interpret vague messages charitably and act. Ask only when truly ambiguous.
 - Proactively remind about forgotten items: [list your chronic blind spots].
@@ -39,9 +39,9 @@
 - `reading.py` — curated reading list with feedback learning
 - `content_scout.py` — automated intelligence pipeline (YouTube + newsletters)
 - `gmail.py` / `gcal.py` — email and calendar across all accounts
-- `discord_send.py` — fire-and-forget Discord messaging
-- `discord_approve.py` — approval gates for outbound content
-- `discord_memory.py` — search Discord conversation history
+- `notify.py` — reach me: email digest by default, iMessage only if urgent
+- `escalate.py` — every scheduled script reports its own failures through this
+- `staleness_watchdog.py` — daily check that every job is still producing
 
 ### MCP Connectors
 - [List your MCP connectors — e.g., Gmail, Google Calendar, Slack, Gamma]

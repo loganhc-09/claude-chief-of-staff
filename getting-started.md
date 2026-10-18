@@ -130,7 +130,7 @@ See [examples/scripts/briefing.py](examples/scripts/briefing.py) for a starter t
 
 ### Extract value from conversations automatically
 
-If you use a meeting transcription tool (Granola, Otter, Fireflies, etc.), you're sitting on a goldmine of unprocessed context. Ask Claude to build a pipeline that:
+If you use a meeting transcription tool (Quill, Granola, Otter, Fireflies, etc.), you're sitting on a goldmine of unprocessed context. Ask Claude to build a pipeline that:
 
 1. Fetches new transcripts
 2. Extracts facts, commitments, and follow-ups
@@ -180,6 +180,10 @@ crontab -e
 0 7 * * * /usr/bin/python3 ~/Scripts/briefing.py
 0 9 * * 1 /usr/bin/python3 ~/Scripts/weekly_reminder.py
 ```
+
+**Two habits before you schedule anything:**
+- **Route every job through one wrapper script** (`run.sh`) instead of a raw Python path. Background jobs don't load your shell profile, and on a Mac a Python upgrade can change the path and break permissions. See [architecture.md](architecture.md#macos-launchd).
+- **Decide where failures go before the first job runs.** Pick the inbox you actually check. A job that fails where you can't see it is worse than no job, because you'll assume it's working. See [notifications.md](notifications.md).
 
 **What you'll notice:** Things happen without you asking. Meetings get processed overnight. Your briefing is ready before you open your laptop. Follow-ups surface before they're overdue.
 
@@ -246,4 +250,10 @@ Each addition compounds on the foundation. The briefing gets richer. The follow-
 
 4. **Treating memory as a dump.** Memory files should be curated, not appended to forever. Periodically review and prune. Outdated context is worse than no context.
 
-5. **Skipping the follow-up tracker.** This is the unglamorous workhorse of the system. Most of the value comes from "you said you'd do X and it's been 5 days" — not from fancy dashboards.
+5. **Skipping the follow-up tracker.** This is the unglamorous workhorse of the system. Most of the value comes from "you said you'd do X and it's been 5 days," not from fancy dashboards.
+
+6. **Sending alerts somewhere you don't look.** I ran my alerts through Discord for months. Then I stopped checking Discord, and the alerts kept going there. Put them in the inbox you already open every day.
+
+7. **Trusting "it's loaded" as "it's working."** A scheduled job can be loaded and still produce nothing for weeks. Check the output, not the scheduler.
+
+8. **Never pruning.** Every few months, list what's scheduled and what you've actually used. Cut the rest. Mine had grown to 52 scheduled jobs before I did this.

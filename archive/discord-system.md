@@ -1,5 +1,7 @@
 # Discord System
 
+> **Retired September 2026.** I stopped checking Discord, so I replaced this with an email digest plus iMessage for urgent items. See [notifications.md](../notifications.md) and [why I retired it](README.md). The guide is kept as-is for reference; links in it may point to old paths.
+
 How to turn a Discord server into a two-way interface for your AI chief of staff — messaging, approval gates, memory mining, and fact extraction.
 
 ## Why Discord?
@@ -171,7 +173,7 @@ python3 ~/Scripts/discord_approve.py \
 
 ### Why This Matters
 
-This is the Tier 2 handoff point from the [architecture](architecture.md). Claude preps, you decide. Without approval gates, you either:
+This is the Tier 2 handoff point from the [architecture](../architecture.md). Claude preps, you decide. Without approval gates, you either:
 - Don't automate content (too risky) → miss the compound effect
 - Automate without review (too dangerous) → publish garbage
 

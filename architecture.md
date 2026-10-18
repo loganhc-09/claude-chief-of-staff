@@ -1,6 +1,8 @@
 # System Architecture
 
-How the Chief of Staff system works — data flows, memory, scheduling, and interaction patterns.
+How the Chief of Staff system works: data flows, memory, scheduling, and interaction patterns.
+
+*Updated October 2026. Everything runs on one Mac, and output reaches me by email (iMessage for urgent). The old Discord layer is in [archive/](archive/). See the [CHANGELOG](CHANGELOG.md).*
 
 > **See also:** [operating-system-map](https://loganhc-09.github.io/operating-system-map/) — interactive visualization of how the pieces connect.
 
@@ -10,12 +12,11 @@ How the Chief of Staff system works — data flows, memory, scheduling, and inte
 flowchart TB
     subgraph INPUTS["DATA SOURCES"]
         direction TB
-        MEET["Meeting Transcripts\n(Granola, Otter, etc.)"]
+        MEET["Meeting Transcripts\n(Quill, Otter, etc.)"]
         GCAL["Google Calendar\n(personal + work)"]
         GMAIL["Gmail\n(personal + work)"]
         ANALYTICS["Platform Analytics\n(social, website, etc.)"]
         NOTES["Notes & Documents\n(Obsidian, Notion, etc.)"]
-        DISCORD["Discord\n(conversations + approvals)"]
         FEEDS["YouTube + Newsletters\n(content scout sources)"]
         RSS["RSS + HN\n(reading system feeds)"]
     end
@@ -27,7 +28,7 @@ flowchart TB
         SESSION["Session start hook\nbriefing script"]
         SCOUT_SCHED["launchd: daily, early morning\ncontent scout pipeline"]
         READ_SCHED["launchd: daily, early morning\nreading collection"]
-        DISCORD_BOT["Discord bot\nalways-on (KeepAlive)"]
+        WATCHDOG["launchd: daily, early morning\nstaleness watchdog"]
     end
 
     subgraph PROCESSING["PROCESSING"]
@@ -38,8 +39,8 @@ flowchart TB
         ANALYSIS["Data analysis\nperiodic pattern extraction"]
         SCOUT["Content scout\ncollect → extract → cluster → brief"]
         READING["Reading system\ncollect → score → rank → learn"]
-        DISCORD_EXTRACT["Discord extraction\nconversations → facts"]
-        APPROVAL["Approval routing\n✅ approve / ❌ reject / ✏️ edit"]
+        HEALTH["Health check\nis every job still producing?"]
+        APPROVAL["Approval queue\nreviewed in session"]
     end
 
     subgraph MEMORY["KNOWLEDGE STORE"]
@@ -64,7 +65,7 @@ flowchart TB
     subgraph OUTPUTS["OUTPUTS"]
         direction TB
         BRIEFING_OUT["Morning Briefing\nprinted to session"]
-        REMINDERS["Reminders\n(Discord, etc.)"]
+        REMINDERS["Email digest\n+ iMessage (urgent only)"]
         DRAFTS["Draft Messages\nemail, social, outreach"]
         VAULT_UPDATES["Knowledge Updates\nfacts, follow-ups, dashboards"]
     end
@@ -75,7 +76,6 @@ flowchart TB
     GMAIL -->|every session| SESSION
     ANALYTICS -->|daily/weekly| LD_REMIND
     NOTES -->|on demand| SESSION
-    DISCORD -->|always-on| DISCORD_BOT
     FEEDS -->|daily, early morning| SCOUT_SCHED
     RSS -->|daily, early morning| READ_SCHED
 
@@ -85,8 +85,7 @@ flowchart TB
     SESSION --> BRIEF
     SCOUT_SCHED --> SCOUT
     READ_SCHED --> READING
-    DISCORD_BOT --> DISCORD_EXTRACT
-    DISCORD_BOT --> APPROVAL
+    WATCHDOG --> HEALTH
 
     %% Processing → Memory
     SYNC --> MEETINGS
@@ -94,7 +93,6 @@ flowchart TB
     EXTRACT --> FOLLOWUPS
     ANALYSIS --> DASHBOARD
     SCOUT --> FACTS
-    DISCORD_EXTRACT --> FACTS
     READING --> DASHBOARD
 
     %% Memory → Processing (feedback loops)
@@ -109,7 +107,9 @@ flowchart TB
     BRIEF --> REMINDERS
     ANALYSIS --> VAULT_UPDATES
     SCOUT -->|intelligence brief| BRIEFING_OUT
+    APPROVAL_Q -->|pending items| APPROVAL
     APPROVAL -->|approved content| VAULT_UPDATES
+    HEALTH -->|failures| REMINDERS
 
     %% Styling
     classDef input fill:#4a90d9,stroke:#2c5f8a,color:#fff
@@ -139,10 +139,10 @@ flowchart TB
 |--------|--------|---------|--------|
 | Meeting transcripts | `meeting_sync.py` | Hourly (launchd) | Processed transcripts in vault |
 | Platform analytics | `analytics.py` | Weekly (launchd) | Dashboard update |
-| Reminders | `reminder.py` | Daily/weekly | Push notifications |
+| Reminders | `reminder.py` | Daily/weekly | Email digest (iMessage if urgent) |
 | YouTube + newsletters | `content_scout.py` | Daily, early morning (launchd) | Intelligence briefs |
 | RSS + HN feeds | `reading.py collect` | Daily, early morning (launchd) | Ranked reading queue |
-| Discord conversations | `extract_discord_facts.py` | Overnight (prep pipeline) | Facts in memory.db |
+| Every scheduled job | `staleness_watchdog.py` | Daily, early morning (launchd) | Email if anything stopped producing |
 
 ### Periodic (manual trigger)
 | Source | Method | Cadence | Output |
@@ -380,8 +380,8 @@ Example: hourly meeting sync
     <string>com.chiefofstaff.meeting-sync</string>
     <key>ProgramArguments</key>
     <array>
-        <string>/usr/bin/python3</string>
-        <string>/Users/you/Scripts/meeting_sync.py</string>
+        <string>/Users/you/Scripts/run.sh</string>
+        <string>meeting_sync.py</string>
     </array>
     <key>StartInterval</key>
     <integer>3600</integer>
@@ -397,6 +397,19 @@ Load it:
 ```bash
 launchctl load ~/Library/LaunchAgents/com.chiefofstaff.meeting-sync.plist
 ```
+
+**Use one wrapper script for every job.** Every plist above calls `run.sh` instead of a Python path. That way the interpreter path lives in one place:
+
+```bash
+#!/bin/bash
+# run.sh: every launchd job goes through here
+SCRIPT="$1"; shift
+exec /opt/homebrew/bin/python3 "$HOME/Scripts/$SCRIPT" "$@"
+```
+
+Two reasons this matters on a Mac. launchd jobs don't load your shell profile, so anything they need (PATH, API keys) has to be set here. And macOS privacy permissions like Full Disk Access are granted per binary path. When Homebrew upgrades Python, the path changes and every job that needed that permission starts failing. Your manual test runs still work, because they inherit your terminal's permissions. That gap has bitten me twice. After any Python upgrade, re-grant the permission to the new binary and check that the *scheduled* run worked, not just a manual one.
+
+**Know the three ways a scheduled job dies:** (1) it crashes, (2) it stops firing at all, (3) you disable it "for now" and forget. See [notifications.md](notifications.md) for the watchdog that catches all three.
 
 ### Linux (cron)
 
@@ -470,14 +483,13 @@ Three feedback-driven systems that get smarter over time:
 
 See **[learning-loops.md](learning-loops.md)** for architecture, scoring models, and how to build each system.
 
-### Discord System (Deep Dive)
-A Discord server as a two-way interface for the chief of staff:
-- **Bot** — always-on, routes messages to Claude Code CLI with full context
-- **Approval gates** — content drafts posted to #approvals, approved/rejected via emoji
-- **Memory mining** — search and cross-reference Discord conversation history
-- **Fact extraction** — overnight pipeline mines conversations for knowledge
+### Notifications and Failure Handling (Deep Dive)
+How the system reaches you, and how you find out when part of it breaks:
+- **Two lanes.** An email digest by default. iMessage only for the rare thing that can't wait.
+- **Escalation.** Every scheduled script reports its own failures, rate-limited so a broken job can't flood you.
+- **Staleness watchdog.** A daily check that every job is still *producing* output, not just loaded.
 
-See **[discord-system.md](discord-system.md)** for setup, channel design, and integration patterns.
+See **[notifications.md](notifications.md)**. The Discord interface I used to run (bot, approval gates, fact extraction) is in **[archive/](archive/)** with a note on why I retired it.
 
 ## What's Built vs. What's Possible
 
@@ -491,7 +503,7 @@ This architecture is modular. You don't need all of it. Here's a realistic build
 | **Month 1** | Meeting transcript processing + SQLite memory | 2-3 hours |
 | **Month 2** | Scheduled jobs (launchd/cron) | 1 hour |
 | **Month 2** | Session hooks (auto-briefing, auto-export) | 30 minutes |
-| **Month 2** | Discord bot + approval gates | 2-3 hours |
+| **Month 2** | Notification lanes + failure alerts | 1-2 hours |
 | **Month 2** | Reading system with feedback learning | 2-3 hours |
 | **Month 3** | Content scout + intelligence briefs | 2-3 hours |
 | **Month 3+** | Full learning loops, everything connected | Ongoing |
@@ -502,7 +514,7 @@ The "time investment" column is mostly you describing what you want — Claude C
 
 This system stands on a lot of other people's thinking. Roughly chronological by when each shaped my build:
 
-- **Jumperz on X — [@jumperz](https://x.com/jumperz)** (late January / early February 2026, before Karpathy). Posted a 31-piece memory architecture in three phases — core → reliability → intelligence — and a separate playbook for Discord-as-orchestration with Discrawl. The early shape of this memory system *and* the Discord setup in [discord-system.md](discord-system.md) trace back to his threads.
+- **Jumperz on X — [@jumperz](https://x.com/jumperz)** (late January / early February 2026, before Karpathy). Posted a 31-piece memory architecture in three phases — core → reliability → intelligence — and a separate playbook for Discord-as-orchestration with Discrawl. The early shape of this memory system *and* the Discord setup (now in [archive/](archive/discord-system.md)) trace back to his threads.
 - **Andrej Karpathy — [the three-folders guide](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f)** (March 2026). The clean diagrams that made a thousand people post "I'm going to build this on Saturday." The shape of the vault here owes a lot to it.
 - **Kat, the [Poet Engineer](https://x.com/poetengineer__)** — beautiful systems where ideas drift between nodes like particles in a digital garden. The weekly cross-reference loop in [learning-loops.md](learning-loops.md) came from a screenshot of hers I sent my AI saying "build that."
 - **LangChain — [Your Harness, Your Memory](https://blog.langchain.com/your-harness-your-memory/)** — the cleanest visual for *platform-owned memory* vs. *your own files*. If someone asks "why this approach instead of a hosted memory product," send them that post.
